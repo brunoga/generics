@@ -7,8 +7,8 @@ import (
 
 // sizeOf computes the size of a type using reflection.
 //
-// TODO(bga): Change this if we are ever allowed to use
-//            unsafe.Sizeof with generic types.
+// TODO(bga): Change this if we are ever allowed to use unsafe.Sizeof with
+//            generic types.
 func sizeOf[T any](t T) uintptr {
 	return reflect.TypeOf(t).Size()
 }
@@ -28,7 +28,7 @@ func convertSlice[T1, T2 any](src []T1, dstCap int) []T2 {
 }
 
 // Convert does an in-place conversion of a slice of type T1 to a slice of type
-// T2. The source and destination slices are validate before the conversion is
+// T2. The source and destination slices are validated before the conversion is
 // done and, in case of issues, the code will panic.
 func Convert[T1, T2 any](src []T1) []T2 {
 	srcTypeSize := sizeOf(src[0])
@@ -36,6 +36,13 @@ func Convert[T1, T2 any](src []T1) []T2 {
 	var dstTypeVar T2
 	dstTypeSize := sizeOf(dstTypeVar)
 
+	// The idea is to coerce the entire underlying array into the new slice so
+	// we ignore the length and look at capacity instead. Note this wi;; result
+	// in some extraneus entries in the slice when it is not fully used.
+	//
+	// TODO(bga): Another approach is to also checjk the length in bytes and
+	//            make sure it is a multiple of dstTypeSize and adjust the dst
+	//            slice accordingly.
 	srcCapInBytes := srcTypeSize * uintptr(cap(src))
 
 	if srcCapInBytes%dstTypeSize != 0 {

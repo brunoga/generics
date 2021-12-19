@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"reflect"
 	"testing"
 	"unsafe"
@@ -53,7 +54,7 @@ func TestConvert(t *testing.T) {
 		Convert[type3bytes, int]([]type3bytes{})
 	})
 
-	dst := Convert[int, byte]([]int{0})
+	dst := Convert[uint64, byte]([]uint64{math.MaxUint64})
 	if len(dst) != 8 {
 		t.Errorf("Convert() = len(dst)=%v, want 8", len(dst))
 	}
@@ -61,8 +62,8 @@ func TestConvert(t *testing.T) {
 		t.Errorf("Convert() = cap(dst)=%v, want 8", len(dst))
 	}
 	for i := 0; i < 8; i++ {
-		if dst[i] != 0 {
-			t.Errorf("Convert() = dst[%v]=%v, want 0", i, dst[i])
+		if dst[i] != 255 {
+			t.Errorf("Convert() = dst[%v]=%v, want 255", i, dst[i])
 		}
 	}
 }
