@@ -2,9 +2,10 @@
 Fast conversion from a slice of any type to a slice of any other type.
 
 Conversions can be made as long as the src slice len and cap are multiples of
-the dst slice item size. If those requirements are not met, code will panic.
+the dst slice item size. If those requirements are not met, the Convert() call
+wioll panic.
 
-## USage:
+## Usage:
 
 src := []MyFancyStruct{ ... }
 
