@@ -15,13 +15,13 @@ func sizeOf[T any](t T) uintptr {
 
 // convertSlice does a completelly unsafe conversion assuming that any
 // validation has already been done.
-func convertSlice[T1, T2 any](src []T1, dstCap int) []T2 {
+func convertSlice[T1, T2 any](src []T1, dstCap, dstLen int) []T2 {
 	var dst []T2
 
 	// Adjust destination slice header.
 	hs := (*reflect.SliceHeader)(unsafe.Pointer(&dst))
 	hs.Data = uintptr(unsafe.Pointer(&src[0]))
-	hs.Len = dstCap
+	hs.Len = dstLen
 	hs.Cap = dstCap
 
 	return dst
@@ -39,17 +39,18 @@ func Convert[T1, T2 any](src []T1) []T2 {
 	// The idea is to coerce the entire underlying array into the new slice so
 	// we ignore the length and look at capacity instead. Note this wi;; result
 	// in some extraneus entries in the slice when it is not fully used.
-	//
-	// TODO(bga): Another approach is to also checjk the length in bytes and
-	//            make sure it is a multiple of dstTypeSize and adjust the dst
-	//            slice accordingly.
 	srcCapInBytes := srcTypeSize * uintptr(cap(src))
+	srcLenInBytes := srcTypeSize * uintptr(len(src))
 
 	if srcCapInBytes%dstTypeSize != 0 {
 		panic("Convert: src cap in bytes must be a multiple of the dst type size")
 	}
+	if srcLenInBytes%dstTypeSize != 0 {
+		panic("Convert: src len in bytes must be a multiple of the dst type size")
+	}
 
 	dstCap := srcCapInBytes / dstTypeSize
+	dstLen := srcLenInBytes / dstTypeSize
 
-	return convertSlice[T1, T2](src, int(dstCap))
+	return convertSlice[T1, T2](src, int(dstCap), int(dstLen))
 }

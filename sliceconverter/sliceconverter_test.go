@@ -22,7 +22,7 @@ func Test_sizeOf(t *testing.T) {
 func Test_convertSlice(t *testing.T) {
 	src := []byte{'0', '1', '2', '3'}
 
-	dst := convertSlice[byte, int](src, 1)
+	dst := convertSlice[byte, int](src, 1, 1)
 
 	hsSrc := (*reflect.SliceHeader)(unsafe.Pointer(&src))
 	hsDst := (*reflect.SliceHeader)(unsafe.Pointer(&dst))
@@ -50,8 +50,12 @@ func expectPanic(t *testing.T, f func()) {
 
 func TestConvert(t *testing.T) {
 	type type3bytes [3]byte
+
 	expectPanic(t, func() {
 		Convert[type3bytes, int]([]type3bytes{})
+	})
+	expectPanic(t, func() {
+		Convert[byte, int](make([]byte, 8, 9))
 	})
 
 	dst := Convert[uint64, byte]([]uint64{math.MaxUint64})
