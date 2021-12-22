@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/brunoga/generics/slice/converter"
+	"github.com/brunoga/generics/slices/converter"
 )
 
 // MMapSlice is a slice of type T that is backed by a memory mapped file. You
@@ -55,7 +55,7 @@ func Map[T any](filename string) (MMapSlice[T], error) {
 	// Create a slice that will interpret the data in the mapped memory as
 	// having the type we want. This does an in-place conversion so it works as
 	// expected
-	ms := sliceconverter.Convert[byte, T](data)
+	ms := converter.Convert[byte, T](data)
 
 	// Make sure we unmap the memory when the slice goes out of scope.
 	runtime.SetFinalizer(ms, (*MMapSlice[T]).UnMap)
@@ -67,7 +67,7 @@ func Map[T any](filename string) (MMapSlice[T], error) {
 // slice to the file represented by the given filename. This file can later be
 // mapped (with the Map function above) to a MMapSlice.
 func Save[T any](slice []T, filename string) error {
-	return ioutil.WriteFile(filename, sliceconverter.Convert[T, byte](slice), 0600)
+	return ioutil.WriteFile(filename, converter.Convert[T, byte](slice), 0600)
 }
 
 // UnMap unmaps the memory associated with the given MMapSlice. Any changes to
@@ -76,7 +76,7 @@ func (ms *MMapSlice[T]) UnMap() error {
 	runtime.SetFinalizer(ms, nil)
 
 	// Unmap associated memory.
-	err := syscall.Munmap(sliceconverter.Convert[T, byte](*ms))
+	err := syscall.Munmap(converter.Convert[T, byte](*ms))
 	if err != nil {
 		return err
 	}
