@@ -1,4 +1,4 @@
-package sliceconverter
+package converter
 
 import (
 	"math"

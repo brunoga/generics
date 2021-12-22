@@ -1,4 +1,4 @@
-package sliceconverter
+package converter
 
 import (
 	"reflect"
@@ -36,17 +36,16 @@ func Convert[T1, T2 any](src []T1) []T2 {
 	var dstTypeVar T2
 	dstTypeSize := sizeOf(dstTypeVar)
 
-	// The idea is to coerce the entire underlying array into the new slice so
-	// we ignore the length and look at capacity instead. Note this wi;; result
-	// in some extraneus entries in the slice when it is not fully used.
 	srcCapInBytes := srcTypeSize * uintptr(cap(src))
 	srcLenInBytes := srcTypeSize * uintptr(len(src))
 
 	if srcCapInBytes%dstTypeSize != 0 {
-		panic("Convert: src cap in bytes must be a multiple of the dst type size")
+		panic("Convert: src cap in bytes must be a multiple of the "+
+			"dst type size")
 	}
 	if srcLenInBytes%dstTypeSize != 0 {
-		panic("Convert: src len in bytes must be a multiple of the dst type size")
+		panic("Convert: src len in bytes must be a multiple of the "+
+			"dst type size")
 	}
 
 	dstCap := srcCapInBytes / dstTypeSize
