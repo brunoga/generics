@@ -1,4 +1,4 @@
-package mmapslice
+package mmap
 
 import (
 	"os"

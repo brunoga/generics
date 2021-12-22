@@ -1,7 +1,7 @@
 //go:build linux
 // +build linux
 
-package mmapslice
+package mmap
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/brunoga/generics/sliceconverter"
+	"github.com/brunoga/generics/slice/converter"
 )
 
 // MMapSlice is a slice of type T that is backed by a memory mapped file. You
