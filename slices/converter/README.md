@@ -1,4 +1,4 @@
-# sliceconverter
+# slices/converter
 Fast conversion from a slice of any type to a slice of any other type.
 
 Conversions can be made as long as the src slice len and cap are multiples of
