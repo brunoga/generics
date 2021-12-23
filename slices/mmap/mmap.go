@@ -55,10 +55,10 @@ func Map[T any](filename string) (MMapSlice[T], error) {
 	// Create a slice that will interpret the data in the mapped memory as
 	// having the type we want. This does an in-place conversion so it works as
 	// expected
-	ms := converter.Convert[byte, T](data)
+	ms := MMapSlice[T](converter.Convert[byte, T](data))
 
 	// Make sure we unmap the memory when the slice goes out of scope.
-	runtime.SetFinalizer(ms, (*MMapSlice[T]).UnMap)
+	runtime.SetFinalizer(&ms, (*MMapSlice[T]).UnMap)
 
 	return ms, nil
 }

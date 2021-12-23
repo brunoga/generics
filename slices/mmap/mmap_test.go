@@ -14,7 +14,7 @@ func TestMMapSlice(t *testing.T) {
 
 	defer func() { os.Remove("slice.mmap") }()
 
-	mmapSlice, err := Map[int]("mmapslice_test")
+	mmapSlice, err := Map[int]("slice.mmap")
 	if err != nil {
 		t.Error(err)
 	}
@@ -27,5 +27,11 @@ func TestMMapSlice(t *testing.T) {
 			t.Errorf("slice[%d] = %d, mmapSlice[%d] = %d", i, v, i,
 				mmapSlice[i])
 		}
+	}
+
+	// Just make sure writing to the slice works.
+	mmapSlice[0] = 4
+	if mmapSlice[0] != 4 {
+		t.Errorf("mmapSlice[0] = %d, expected 4", mmapSlice[0])
 	}
 }
